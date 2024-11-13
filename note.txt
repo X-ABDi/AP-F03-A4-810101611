@@ -1,0 +1,19 @@
+
+    Its type is “int (*)(char,float)” if an ordinary function
+    Its type is “int (Fred::*)(char,float)” if a non-static member function of class Fred
+
+for initializing or adding to my user defined map there is no = overloaded thus insert() 
+    does not work too. maybe implace() works.
+    because it is an ordered map,, so i change it to unordered map.
+    so i got implicit instantiation of undefined template.
+    EMPLACE() JUST WORKED!!! AND I AM FIGURETIVELY CRYING :))))
+
+fucccccckkk for static members you have to define them,, allocating some memory or you obviously 
+    can not use or modify it.
+
+it's a nasty try to have a static functions in a class accessing a static map member , to call another
+    static function member with arguments :////
+    implicit instantiations and calling a static function without appropriate pointer or sth ...
+    what a messs !!!
+
+    well using iterators and a bunch of correctoins problem solved.
