@@ -1,32 +1,28 @@
 #include "leitner.hpp"
 
-std::vector<std::string> leitner::inputHandle()
+leitner::leitner()
 {
-    get_input.getLine();
-    return get_input.split();
-}
+    today = 1;
+    streak = 0;
+    total_day_participated = 0;
+    mastered_cards_num = 0;
 
-std::string_view leitner::commandHandle (std::vector<std::string> command)
-{
-    return process_input.identifyCommand(command);
-}
+    every_day_activity[1].correct_num = 0;
+    every_day_activity[1].wrong_num = 0;
+    every_day_activity[1].reviewed = false;
+    every_day_activity[1].participated = false;
 
-void leitner::initiate ()
-{
-    while (true)
-    {
-        std::vector<std::string> command{inputHandle()};
-        if (command.size() == 0)
-            break;
-        std::string respond{commandHandle(command)};
-        std::cout << respond << std::endl;
-        // result(respond);
-    }
-}
+    box_review_today box{false, false};
+    boxes_to_review_today[MONTHLY_BOX] = box;
+    boxes_to_review_today[WEEKLY_BOX] = box;
+    boxes_to_review_today[THREE_DAY_BOX] = box;
+    box = {true, false};
+    boxes_to_review_today[EVERY_DAY_BOX] = box;
 
-int main ()
-{
-    leitner leitner_box;
-    leitner_box.initiate();
-    return 0;
+    boxes_map = {
+        {MONTHLY_BOX, monthly_box},
+        {WEEKLY_BOX, weekly_box},
+        {THREE_DAY_BOX, every_three_day_box},
+        {EVERY_DAY_BOX, every_day_box}
+    };
 }

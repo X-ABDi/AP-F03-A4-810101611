@@ -1,3 +1,7 @@
+#ifndef __GET_INPUT__
+#define __GET_INPUT__
+
+#include "global.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -10,7 +14,7 @@ class getInput
         std::stringstream line_stream;
     public:
         void getLine ();
-        void printLine ();
         std::vector<std::string> split();
-
 };
+
+#endif

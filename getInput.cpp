@@ -20,8 +20,3 @@ std::vector<std::string> getInput::split()
     }
     return command;
 }
-
-void getInput::printLine()
-{
-    std::cout << line << std::endl;
-}
