@@ -26,3 +26,23 @@ leitner::leitner()
         {EVERY_DAY_BOX, every_day_box}
     };
 }
+
+leitner::~leitner()
+{
+    for (auto i : monthly_box)
+    {
+        delete i;
+    }
+    for (auto i : weekly_box)
+    {
+        delete i;
+    }
+    for (auto i : every_three_day_box)
+    {
+        delete i;
+    }
+    for (auto i : every_day_box)
+    {
+        delete i;
+    }
+}

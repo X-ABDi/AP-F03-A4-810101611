@@ -1,6 +1,6 @@
 #include "processInput.hpp"
 
-void defineIterator (int &current_box, std::vector<flashcard*>::iterator card_it, leitner* leitner_box)
+void defineIterator (int &current_box, std::vector<flashcard*>::iterator &card_it, leitner* leitner_box)
 {
     switch (current_box)
     {
@@ -22,7 +22,7 @@ void defineIterator (int &current_box, std::vector<flashcard*>::iterator card_it
     leitner_box->every_day_activity[leitner_box->today].reviewed = true;
 }
 
-void determineIterator (int &current_box, std::vector<flashcard*>::iterator card_it, leitner* leitner_box)
+void determineIterator (int &current_box, std::vector<flashcard*>::iterator &card_it, leitner* leitner_box)
 {
     std::map<int, box_review_today>::iterator box_it;
     switch (current_box)
@@ -62,7 +62,7 @@ void determineIterator (int &current_box, std::vector<flashcard*>::iterator card
     defineIterator (current_box, card_it, leitner_box);
 }
 
-void moveCards (int &current_box, std::vector<flashcard*>::iterator card_it, leitner* leitner_box)
+void moveCards (int &current_box, std::vector<flashcard*>::iterator &card_it, leitner* leitner_box)
 {
     if ((*card_it)->wrong_count == 0)
     {
@@ -116,10 +116,10 @@ void moveCards (int &current_box, std::vector<flashcard*>::iterator card_it, lei
 void reviewCards (int max_card_num, leitner* leitner_box)
 {
     int count{0};
-    std::vector<flashcard*>::iterator card_it;// = leitner_box->monthly_box.begin();
+    std::vector<flashcard*>::iterator card_it;
     int current_box{NOT_INITIALIZED};
     std::string user_answer;
-    while (count <= max_card_num)
+    while (count < max_card_num)
     {
         determineIterator(current_box, card_it, leitner_box);
         if ((*card_it)->last_day_reviewed != leitner_box->today)
@@ -127,13 +127,13 @@ void reviewCards (int max_card_num, leitner* leitner_box)
             std::cout << output::REVIEW_TODAY_FIRST_LINE;
             std::cout << (*card_it)->question;
             std::cout << output::REVIEW_TODAY_SECOND_LINE;
+            std::cin.clear();
             std::getline(std::cin, user_answer);
             if (user_answer == (*card_it)->answer)
             {
                 std::cout << output::REVIEW_TODAY_CORRECT;
                 (*card_it)->wrong_count = 0;
                 (*card_it)->last_day_reviewed = leitner_box->today;
-                leitner_box->mastered_cards_num += 1;
                 leitner_box->every_day_activity[leitner_box->today].correct_num += 1;
             }
             else
@@ -156,7 +156,7 @@ void endofDayMoveCards(leitner* leitner_box)
 {
     for (auto i : leitner_box->boxes_to_review_today)
     {
-        if (i.second.reviewed_today == false)
+        if (i.second.reviewed_today == false && i.second.must_review == true)
         {
             std::vector<flashcard*>::iterator box_it = leitner_box->boxes_map[i.first].begin();
             while (box_it != leitner_box->boxes_map[i.first].end())
@@ -229,6 +229,7 @@ void nesseceryChanges(leitner* leitner_box)
 }
 
 std::map <std::string_view, processInput::command_func> processInput::command_functions;
+std::string processInput::return_value;
 
 processInput::processInput()
 {
@@ -252,21 +253,22 @@ std::string_view processInput::identifyCommand (std::vector<std::string> command
 
 std::string_view processInput::streakFunc (std::vector<std::string> command, leitner* leitner_box)
 {
-    std::string respond;
-    respond = output::STREAK_FIRST_LINE;
-    respond += std::to_string(leitner_box->streak);
-    respond += output::END_OF_LINE;
-    respond += output::STREAK_SECOND_LINE;
+    return_value.clear();
+    return_value += output::STREAK_FIRST_LINE;
+    return_value += std::to_string(leitner_box->streak);
+    return_value += output::END_OF_LINE;
+    return_value += output::STREAK_SECOND_LINE;
     leitner_box->every_day_activity[leitner_box->today].participated = true;
-    return std::string_view{respond};
+    return std::string_view{return_value};
 }
 
 std::string_view processInput::addFunc (std::vector<std::string> command, leitner* leitner_box)
 {
     int card_num{stoi(command[1])};
-    for (int i; i < card_num; i++)
+    for (int i=0; i < card_num; i++)
     {
         flashcard* fc = new flashcard;
+        std::cin.clear();
         std::getline(std::cin, fc->question);
         std::getline(std::cin, fc->answer);
         fc->last_day_reviewed = 0;
@@ -291,7 +293,7 @@ std::string_view processInput::reportFunc (std::vector<std::string> command, lei
 {
     int start_day = stoi(command[1]);
     int end_day = stoi(command[2]);
-    std::string return_value{""};
+    return_value.clear();
     return_value += output::GET_REPORT_FIRST_LINE;
     return_value += ([start_day, end_day](){if(start_day==end_day)return std::to_string(start_day)+"\n";return std::to_string(start_day)+" to "+std::to_string(end_day)+"\n";})();
     return_value += output::GET_REPORT_SECOND_LINE;
@@ -308,7 +310,7 @@ std::string_view processInput::reportFunc (std::vector<std::string> command, lei
 
 std::string_view processInput::prgReportFunc (std::vector<std::string> command, leitner* leitner_box)
 {
-    std::string return_value{""};
+    return_value.clear();
     return_value += output::GET_PRG_RPT_FIRST_LINE;
     return_value += [leitner_box](){return std::to_string(leitner_box->today)+"\n";}();
     return_value += output::GET_PRG_RPT_SECOND_LINE;
@@ -327,7 +329,7 @@ std::string_view processInput::nextdayFunc (std::vector<std::string> command, le
 {  
     endofDayMoveCards (leitner_box);
     nesseceryChanges (leitner_box);
-    std::string return_value{""};
+    return_value.clear();
     return_value += output::NEXT_DAY_FIRST_LINE1;
     return_value += std::to_string(leitner_box->today);
     return_value += output::NEXT_DAY_FIRST_LINE2;

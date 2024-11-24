@@ -17,10 +17,17 @@ void interface::initiate (leitner* leitner_box)
     std::string respond;
     while (true)
     {
+        std::cin.clear();
         command = inputHandle();
+        // std::cout << "in interface: command vector: " << std::endl;
+        // for (auto i : command)
+        // {
+        //     std::cout << i << std::endl;
+        // }
+        
         if (command.size() == 0)
             break;
         respond = commandHandle(command, leitner_box);
-        std::cout << respond << std::endl;
+        std::cout << respond;
     }
 }

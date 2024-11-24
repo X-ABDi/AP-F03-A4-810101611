@@ -9,10 +9,11 @@
 
 class getInput
 {
+    public:
         std::string line;
         std::string word; 
         std::stringstream line_stream;
-    public:
+    
         void getLine ();
         std::vector<std::string> split();
 };

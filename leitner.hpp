@@ -24,11 +24,12 @@ class leitner
         std::vector<flashcard*> every_day_box;
     public:
         leitner();
+        ~leitner();
         friend class processInput;
         friend void reviewCards (int max_card_num, leitner* leitner_box);
-        friend void determineIterator (int &current_box, std::vector<flashcard*>::iterator card_it, leitner* leitner_box);
-        friend void moveCards (int &current_box, std::vector<flashcard*>::iterator card_it, leitner* leitner_box);
-        friend void defineIterator (int &current_box, std::vector<flashcard*>::iterator card_it, leitner* leitner_box);
+        friend void determineIterator (int &current_box, std::vector<flashcard*>::iterator &card_it, leitner* leitner_box);
+        friend void moveCards (int &current_box, std::vector<flashcard*>::iterator &card_it, leitner* leitner_box);
+        friend void defineIterator (int &current_box, std::vector<flashcard*>::iterator &card_it, leitner* leitner_box);
         friend void endofDayMoveCards(leitner* leitner_box);
         friend void nesseceryChanges(leitner* leitner_box);
 };
